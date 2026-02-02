@@ -142,6 +142,15 @@ LIMIT 10;
 
 ## 🚀 How to Run Locally
 ```bash
+# Update AWS configuration values in `config.py`.
+```python
+configuration = {
+    "AWS_ACCESS_KEY": "<your-aws-access-key>",
+    "AWS_SECRET_KEY": "<your-aws-secret-key>",
+    "AWS_REGION": "<your-aws-region>
+}
+```
+```bash
 # Start Kafka, Spark, and ZooKeeper
 docker-compose up
 ```
