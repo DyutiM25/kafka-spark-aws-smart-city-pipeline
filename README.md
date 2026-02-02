@@ -85,7 +85,7 @@ This project implements a **distributed streaming data pipeline** that:
 
 ---
 
-## 🧪 Analytics Proof (Amazon Athena)
+## 🧪 Analytics (Amazon Athena)
 
 > Querying real streaming data using serverless SQL
 
@@ -140,19 +140,18 @@ LIMIT 10;
 
 ---
 
-### ✅ **Fixed: How to Run Locally**
-```markdown
 ## 🚀 How to Run Locally
-```
 ```bash
 # Start Kafka, Spark, and ZooKeeper
 docker-compose up
+```
+```bash
 # Run Kafka data producers
 python main.py
-
+```
+```bash
 # Submit Spark streaming job
 spark-submit spark-city.py
-
 ```
 ---
 ## ⭐ Key Engineering Highlights
