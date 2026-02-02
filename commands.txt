@@ -1,0 +1,11 @@
+docker exec -it smartcity-data-pipeline-spark-master-1 /opt/spark/bin/spark-submit `
+  --master spark://spark-master:7077 `
+  --conf spark.jars.ivy=/tmp/.ivy2 `
+  --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,org.apache.hadoop:hadoop-aws:3.3.1,com.amazonaws:aws-java-sdk:1.11.469 `
+  /opt/spark/jobs/spark-city.py
+
+docker exec -it smartcity-data-pipeline-spark-master-1 /opt/spark/bin/spark-submit `
+  --master spark://spark-master:7077 `
+  --conf spark.jars.ivy=/tmp/.ivy2 `
+  --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,org.apache.hadoop:hadoop-aws:3.3.1,com.amazonaws:aws-java-sdk-bundle:1.11.1026 `
+  /opt/spark/jobs/spark-city.py

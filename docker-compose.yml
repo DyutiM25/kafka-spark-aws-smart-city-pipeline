@@ -1,20 +1,20 @@
-x-spark-common: &spark-common
+x-spark-common: &spark-common # yaml anchor for Spark worker configuration; prevents repetition
   image: apache/spark:3.5.8
-  volumes:
+  volumes: # mount local jobs directory into container
       - ./jobs:/opt/spark/jobs
-  command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
-  depends_on:
-    - spark-master
-  environment:
+  command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077 # What the container runs; connects to Spark master
+  depends_on: # ensure Spark master starts first; doesnt guarantee master is ready; just that master container is running
+    - spark-master 
+  environment: # set environment variables for Spark worker inside container
     SPARK_MODE: Worker
-    SPARK_WORKER_CORES: 2
+    SPARK_WORKER_CORES: 2 # number of CPU cores for worker; can do 2 tasks in parallel
     SPARK_WORKER_MEMORY: 1g
     SPARK_MASTER_URL: spark://spark-master:7077
-  networks:
+  networks: # how containers communicate; shared network; docker creates a private LAN for containers to talk to each other
     - datamasterylab
 
 services:
-  zookeeper:
+  zookeeper: # keeps track of Kafka brokers; manages cluster metadata
     image: confluentinc/cp-zookeeper:7.4.0
     hostname: zookeeper
     container_name: zookeeper
@@ -30,7 +30,7 @@ services:
       retries: 5
     networks:
       - datamasterylab
-  broker:
+  broker: # kafkas post offics; producers send messages to brokers; consumers get messages from brokers; topics are partitions within brokers
     image: confluentinc/cp-server:7.4.0
     hostname: broker
     container_name: broker
@@ -38,13 +38,13 @@ services:
       zookeeper:
         condition: service_healthy
     ports:
-      - "9092:9092"
+      - "9092:9092" # expose port 9092 of the container to port 9092 on the host machine
       - "9101:9101"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092 # listener for clients; internal and external access
       KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
@@ -73,7 +73,7 @@ services:
       - ./jobs:/opt/spark/jobs
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
     ports:
-      - "9090:8080"
+      - "9090:8080" # container spark ui runs on 8080; map to host port 9090 to avoid conflicts
       - "7077:7077"
     environment:
       HOME: /tmp
